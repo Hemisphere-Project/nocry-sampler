@@ -1,0 +1,28 @@
+{
+  "POLYPHONY": 8,
+  "LOOPS": {
+    "path" : "./loops/",
+    "note": {
+      "62": {"file": "drumloop-*.wav", "retrigger": true}
+    },
+    "cc": {
+      "37": {"file": "perc-*.wav", "threshold": 64}
+    },
+    "pc": {
+      "5": {"file": "ambient-*.wav"}
+    }
+  },
+  "ONESHOTS": {
+    "path" : "./oneshots/",
+    "note": {
+      "60": {"file": "hit.wav"},
+      "61": {"file": "clap.wav"}
+    },
+    "cc": {
+      "37": {"file": "hit-*.wav", "threshold": 64, "poly": true}
+    },
+    "pc": {
+      "5": {"file": "sfx-*.wav"}
+    }
+  }
+}
