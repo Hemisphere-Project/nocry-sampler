@@ -10,6 +10,7 @@ import sys
 import tty
 import select
 from pyo import *
+from pythonosc.udp_client import SimpleUDPClient
 
 os.environ['PYO_IGNORE_ALSA_WARNINGS'] = '1'
 os.environ['PYO_IGNORE_PORTAUDIO_WARNINGS'] = '1'
@@ -34,11 +35,21 @@ ONESHOTS = config.get("ONESHOTS", {})
 LOOPS_PATH = LOOPS.get("path", "./loops/")
 ONESHOTS_PATH = ONESHOTS.get("path", "./oneshots/")
 
+OSC_PORT = config.get("OSC_PORT", 9000)
+OSC_HOST = config.get("OSC_HOST", "127.0.0.1")
+OSC_TARGET = SimpleUDPClient(OSC_HOST, OSC_PORT)
+
+print(f"OSC configured to {OSC_HOST}:{OSC_PORT}")
+
 MIDI_DEVICE_FILTER = config.get("MIDI_DEVICE_FILTER", "")
 midi_connected = False
 midi_device_index = -1
 
 RUN = True
+
+# ---- OSC SERVER ----
+
+
 
 # ---- AUDIO SERVER ----
 
@@ -217,6 +228,7 @@ def stop_all_oneshots():
 # ---- PLAYER HANDLERS ----
 
 def handle_loop_event(event_type, num, info):
+    
     pattern = info["file"]
     if pattern == 'stop':
         stop_loop_event()
@@ -306,6 +318,15 @@ def handle_midi_event(status, data1, data2):
         elif key in ONESHOTS.get("program", {}):
             info = ONESHOTS["program"][key]
             handle_oneshot_event("program", key, info)
+            
+    # handle OSC
+    osc = info['osc']
+    if osc:
+        osc = osc.strip().split(' ')
+        path = osc[0]
+        arg = int(osc[1]) if len(osc) > 1 else 0
+        OSC_TARGET.send_message(path, arg)
+        print(f"Sending OSC: {path} {arg} to {OSC_HOST}:{OSC_PORT}")
             
 midi = RawMidi(handle_midi_event)
 
