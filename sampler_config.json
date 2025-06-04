@@ -1,19 +1,24 @@
 {
+  "MIDI_DEVICE_FILTER": "LPD8",
   "POLYPHONY": 8,
   "LOOPS": {
-    "path" : "./loops/",
+    "path" : "./samples/loops/",
     "note": {
-      "62": {"file": "drumloop-*.wav", "retrigger": true}
+      "40": {"file": "drumloop.wav", "retrigger": true}
     },
     "cc": {
       "37": {"file": "perc-*.wav", "threshold": 64}
     },
     "pc": {
       "5": {"file": "ambient-*.wav"}
+    },
+    "key": {
+      "a": {"file": "drumloop.wav", "retrigger": true},
+      "b": {"file": "piano.wav"}
     }
   },
   "ONESHOTS": {
-    "path" : "./oneshots/",
+    "path" : "./samples/oneshots/",
     "note": {
       "60": {"file": "hit.wav"},
       "61": {"file": "clap.wav"}
@@ -23,6 +28,9 @@
     },
     "pc": {
       "5": {"file": "sfx-*.wav"}
+    }, 
+    "key": {
+      "q": {"file": "q.wav", "poly": false}
     }
   }
 }
