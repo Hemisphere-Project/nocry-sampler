@@ -10,14 +10,14 @@ if [[ $(command -v apt) ]]; then
     DISTRO='xbian'
     echo "Distribution: $DISTRO"
 
-    apt install python3-pygame libsndfile1-dev portaudio19-dev libportmidi-dev liblo-dev -y
+    apt install libsndfile1-dev portaudio19-dev libportmidi-dev liblo-dev -y
 
 ## ARCH Linux
 elif [[ $(command -v pacman) ]]; then
     DISTRO='arch'
     echo "Distribution: $DISTRO"
 
-    pacman -S python3-pygame --noconfirm --needed
+    pacman -S libsndfile1-dev portaudio19-dev libportmidi-dev liblo-dev --noconfirm --needed
 
 ## Plateform not detected ...
 else
@@ -31,6 +31,7 @@ fi
 python3 -m venv venv
 source venv/bin/activate
 pip install pyo
+# pip install pygame
 
 ln -sf "$BASEPATH/nocry.service" /etc/systemd/system/
 ln -sf "$BASEPATH/nocry" /usr/local/bin/

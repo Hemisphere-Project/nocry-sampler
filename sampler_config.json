@@ -2,35 +2,35 @@
   "MIDI_DEVICE_FILTER": "LPD8",
   "POLYPHONY": 8,
   "LOOPS": {
-    "path" : "./samples/loops/",
+    "path" : "/data/usb/loops/",
     "note": {
-      "40": {"file": "drumloop.wav", "retrigger": true}
+      "40": {"file": "01-*.wav", "retrigger": true},
+      "41": {"file": "02-*.wav", "retrigger": true},
+      "42": {"file": "03-*.wav", "retrigger": true},
+      "43": {"file": "04-*.wav", "retrigger": true},
+      "36": {"file": "05-*.wav", "retrigger": true},
+      "37": {"file": "06-*.wav", "retrigger": true},
+      "38": {"file": "07-*.wav", "retrigger": true},
+      "39": {"file": "stop"}
     },
-    "cc": {
-      "37": {"file": "perc-*.wav", "threshold": 64}
-    },
-    "pc": {
-      "5": {"file": "ambient-*.wav"}
-    },
-    "key": {
-      "a": {"file": "drumloop.wav", "retrigger": true},
-      "b": {"file": "piano.wav"}
-    }
+    "cc": {},
+    "pc": {},
+    "key": {}
   },
   "ONESHOTS": {
-    "path" : "./samples/oneshots/",
-    "note": {
-      "60": {"file": "hit.wav"},
-      "61": {"file": "clap.wav"}
-    },
+    "path" : "/data/usb/oneshots/",
+    "note": {},
     "cc": {
-      "37": {"file": "hit-*.wav", "threshold": 64, "poly": true}
+      "16": {"file": "01-*.wav", "poly": false},
+      "17": {"file": "02-*.wav", "poly": false},
+      "18": {"file": "03-*.wav", "poly": false},
+      "19": {"file": "04-*.wav", "poly": false},
+      "12": {"file": "05-*.wav", "poly": false},
+      "13": {"file": "06-*.wav", "poly": false},
+      "14": {"file": "07-*.wav", "poly": false},
+      "15": {"file": "stop", "poly": false}
     },
-    "pc": {
-      "5": {"file": "sfx-*.wav"}
-    }, 
-    "key": {
-      "q": {"file": "q.wav", "poly": false}
-    }
+    "pc": {}, 
+    "key": {}
   }
 }
