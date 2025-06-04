@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# python launcher
+BASEPATH="$(dirname "$(readlink -f "$0")")"
+
+# try deactivate first
+if [[ -n "$VIRTUAL_ENV" ]]; then
+    deactivate
+fi
+
+# if venv folder source it
+if [[ -d "$BASEPATH/venv" ]]; then
+    source "$BASEPATH/venv/bin/activate"
+fi
+
+python3 "$BASEPATH/nocry-pyo.py" /data/var/nocry/config.json

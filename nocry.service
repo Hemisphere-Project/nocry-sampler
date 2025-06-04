@@ -1,0 +1,11 @@
+[Unit]
+Description=NoCry sampler
+           
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/nocry
+ExecStop=/usr/bin/pkill nocry
+Restart=always
+           
+[Install]
+WantedBy=default.target
