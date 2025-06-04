@@ -13,4 +13,4 @@ if [[ -d "$BASEPATH/venv" ]]; then
     source "$BASEPATH/venv/bin/activate"
 fi
 
-python3 "$BASEPATH/nocry-pyo.py" /data/var/nocry/config.json
+python3 -u "$BASEPATH/nocry-pyo.py" /data/var/nocry/config.json

@@ -13,7 +13,9 @@
       "38": {"file": "07-*.wav", "retrigger": true},
       "39": {"file": "stop"}
     },
-    "cc": {},
+    "cc": {
+      "73": {"file": "volume"}
+    },
     "pc": {},
     "key": {}
   },
@@ -28,7 +30,8 @@
       "12": {"file": "05-*.wav", "poly": false},
       "13": {"file": "06-*.wav", "poly": false},
       "14": {"file": "07-*.wav", "poly": false},
-      "15": {"file": "stop", "poly": false}
+      "15": {"file": "stop"},
+      "77": {"file": "volume"}
     },
     "pc": {}, 
     "key": {}

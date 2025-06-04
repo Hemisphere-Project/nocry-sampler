@@ -33,6 +33,13 @@ source venv/bin/activate
 pip install pyo
 # pip install pygame
 
+# git clone https://github.com/stephensrmmartin/lpd8mk2.git
+# cd lpd8mk2
+# pip install .
+# cd ..
+
+deactivate
+
 ln -sf "$BASEPATH/nocry.service" /etc/systemd/system/
 ln -sf "$BASEPATH/nocry" /usr/local/bin/
 
