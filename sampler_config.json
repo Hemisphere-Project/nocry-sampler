@@ -1,26 +1,39 @@
 {
   "MIDI_DEVICE_FILTER": "LPD8",
   "POLYPHONY": 8,
+  "OSC_PORT": 9000,
+  "OSC_HOST": "127.0.0.1",
   "LOOPS": {
     "path" : "/data/usb/loops/",
+    "exclusive": true,
     "note": {
-      "40": {"file": "01-*.wav", "retrigger": true},
-      "41": {"file": "02-*.wav", "retrigger": true},
-      "42": {"file": "03-*.wav", "retrigger": true},
-      "43": {"file": "04-*.wav", "retrigger": true},
-      "36": {"file": "05-*.wav", "retrigger": true},
-      "37": {"file": "06-*.wav", "retrigger": true},
-      "38": {"file": "07-*.wav", "retrigger": true},
-      "39": {"file": "stop"}
+      "40": {"file": "01-*.wav", "retrigger": true, "osc": "/hartnet/play 1"},
+      "41": {"file": "02-*.wav", "retrigger": true, "osc": "/hartnet/play 2"},
+      "42": {"file": "03-*.wav", "retrigger": true, "osc": "/hartnet/play 3"},
+      "43": {"file": "04-*.wav", "retrigger": true, "osc": "/hartnet/play 4"},
+      "36": {"file": "05-*.wav", "retrigger": true, "osc": "/hartnet/play 5"},
+      "37": {"file": "06-*.wav", "retrigger": true, "osc": "/hartnet/play 6"},
+      "38": {"file": "07-*.wav", "retrigger": true, "osc": "/hartnet/play 7"},
+      "39": {"file": "stop", "osc": "/hartnet/stop"}
     },
     "cc": {
       "73": {"file": "volume"}
     },
-    "pc": {},
+    "pc": {
+      "1": {"osc": "/hartnet/play 1"},
+      "2": {"osc": "/hartnet/play 2"},
+      "3": {"osc": "/hartnet/play 3"},
+      "4": {"osc": "/hartnet/play 4"},
+      "5": {"osc": "/hartnet/play 5"},
+      "6": {"osc": "/hartnet/play 6"},
+      "7": {"osc": "/hartnet/play 7"},
+      "8": {"osc": "/hartnet/stop"}
+    },
     "key": {}
   },
   "ONESHOTS": {
     "path" : "/data/usb/oneshots/",
+    "exclusive": true,
     "note": {},
     "cc": {
       "16": {"file": "01-*.wav", "poly": false},

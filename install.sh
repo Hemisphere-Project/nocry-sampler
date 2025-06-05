@@ -30,7 +30,7 @@ fi
 
 python3 -m venv venv
 source venv/bin/activate
-pip install pyo
+pip install pyo python-osc
 # pip install pygame
 
 # git clone https://github.com/stephensrmmartin/lpd8mk2.git

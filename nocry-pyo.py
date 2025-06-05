@@ -47,10 +47,6 @@ midi_device_index = -1
 
 RUN = True
 
-# ---- OSC SERVER ----
-
-
-
 # ---- AUDIO SERVER ----
 
 # Replace your current Server setup with this:
@@ -137,42 +133,42 @@ def resolve_files(folder, pattern):
 # ---- LOOPS ----
 
 looper_volume = 1.0  # Default volume for loops
-active_looper = None
-active_looper_key = None
+active_loopers = {}  # Replace active_looper/active_looper_key with dict
 
 def stop_looper():
-    global active_looper, active_looper_key
-    if active_looper is not None and active_looper.isPlaying():
-        active_looper.stop()
-    active_looper = None
-    active_looper_key = None
-
-def rewind_looper():
-    global active_looper
-    if active_looper is not None and active_looper.isPlaying():
-        active_looper.stop()
-        active_looper.out()
+    global active_loopers
+    for key in list(active_loopers.keys()):
+        player = active_loopers[key]
+        if player.isPlaying():
+            player.stop()
+        del active_loopers[key]
 
 def play_loop(files, key, rewind_on_retrigger=False):
-    global active_looper, active_looper_key
+    global active_loopers, looper_volume
     if not files:
         return
-    filename = files  # Deterministic: pick first file
-    if active_looper_key == key:
+    
+    filename = files[0]  # Get first file from list
+    
+    # Handle retrigger logic
+    if key in active_loopers:
+        player = active_loopers[key]
         if rewind_on_retrigger:
-            rewind_looper()
+            player.stop()
+            player.out()
         else:
-            stop_looper()
+            player.stop()
+            del active_loopers[key]
         return
-    stop_looper()
-    print(f"Starting loop: {filename}")
-    p = SfPlayer(filename, speed=1, loop=True, mul=looper_volume).out()
-    active_looper = p
-    active_looper_key = key
-
-def stop_loop_event():
-    stop_looper()
-    print("Loop stopped by stop event")
+    
+    # Handle exclusivity
+    if LOOPS.get("exclusive", True):
+        stop_looper()
+    
+    # Start new player
+    player = SfPlayer(filename, speed=1, loop=True, mul=looper_volume).out()
+    player.filename = filename  # Attach filename for comparison
+    active_loopers[key] = player
     
     
 # ---- ONESHOTS ----
@@ -186,30 +182,74 @@ def play_oneshot(files, key, poly=False):
     if not files:
         return
     filename = random.choice(files)
-    
-    if poly:
-        # Remove finished voices first
-        active_oneshot_poly = [p for p in active_oneshot_poly if p.isPlaying()]
-        
-        # Voice stealing: remove oldest if polyphony limit reached
-        if len(active_oneshot_poly) >= POLYPHONY:
-            oldest = active_oneshot_poly.pop(0)  # FIFO: first in is first out
-            oldest.stop()
-            print("Voice stolen for polyphonic oneshot")
-        
-        # Start new voice
-        print(f"Polyphonic oneshot: {filename}")
-        p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
-        active_oneshot_poly.append(p)  # Add to end of list
-        
+    exclusive = ONESHOTS.get("exclusive", False)
+
+    if exclusive:
+        if poly:
+            # Stop all oneshots except already playing instances of this file
+            # Remove finished voices first
+            active_oneshot_poly = [p for p in active_oneshot_poly if p.isPlaying()]
+            # Stop all poly voices not matching this file
+            for p in active_oneshot_poly[:]:
+                if getattr(p, "filename", None) != filename:
+                    p.stop()
+                    active_oneshot_poly.remove(p)
+            # Stop all monophonic oneshots not matching this file
+            for k in list(active_oneshots.keys()):
+                p = active_oneshots[k]
+                if getattr(p, "filename", None) != filename:
+                    p.stop()
+                    del active_oneshots[k]
+            # Voice stealing if needed
+            if len([p for p in active_oneshot_poly if getattr(p, "filename", None) == filename]) >= POLYPHONY:
+                oldest = next(p for p in active_oneshot_poly if getattr(p, "filename", None) == filename)
+                oldest.stop()
+                active_oneshot_poly.remove(oldest)
+            # Start new voice
+            p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
+            p.filename = filename  # Attach filename for comparison
+            active_oneshot_poly.append(p)
+        else:
+            # Stop all oneshots (poly and mono)
+            for p in active_oneshot_poly:
+                p.stop()
+            active_oneshot_poly.clear()
+            for k in list(active_oneshots.keys()):
+                p = active_oneshots[k]
+                p.stop()
+                del active_oneshots[k]
+            # Start new monophonic oneshot
+            p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
+            p.filename = filename
+            active_oneshots[key] = p
     else:
-        # Monophonic handling (existing code)
-        prev = active_oneshots.get(key)
-        if prev is not None and prev.isPlaying():
-            prev.stop()
-        print(f"Monophonic oneshot: {filename}")
-        p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
-        active_oneshots[key] = p
+        if poly:
+            # Polyphonic: just add a new instance, no stopping
+            active_oneshot_poly = [p for p in active_oneshot_poly if p.isPlaying()]
+            if len(active_oneshot_poly) >= POLYPHONY:
+                oldest = active_oneshot_poly.pop(0)
+                oldest.stop()
+            p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
+            p.filename = filename
+            active_oneshot_poly.append(p)
+        else:
+            # Monophonic: stop only other instances of this file
+            # Stop all mono oneshots with the same filename
+            for k in list(active_oneshots.keys()):
+                p = active_oneshots[k]
+                if getattr(p, "filename", None) == filename:
+                    p.stop()
+                    del active_oneshots[k]
+            # Stop all poly oneshots with the same filename
+            for p in active_oneshot_poly[:]:
+                if getattr(p, "filename", None) == filename:
+                    p.stop()
+                    active_oneshot_poly.remove(p)
+            # Start new monophonic oneshot
+            p = SfPlayer(filename, speed=1, loop=False, mul=oneshots_volume).out()
+            p.filename = filename
+            active_oneshots[key] = p
+            
 
 def stop_all_oneshots():
     global active_oneshots, active_oneshot_poly
@@ -229,16 +269,19 @@ def stop_all_oneshots():
 
 def handle_loop_event(event_type, num, info):
     
+    if not info or "file" not in info: return
+    
     pattern = info["file"]
     if pattern == 'stop':
-        stop_loop_event()
+        stop_looper()
+        print("Loop stopped by stop event")
         return
     
     if pattern == 'volume':
-        if active_looper is not None:
-            global looper_volume
-            looper_volume = info.get("value", 127) / 127.0
-            active_looper.setMul(looper_volume)
+        global looper_volume
+        looper_volume = info.get("value", 127) / 127.0
+        for key in list(active_loopers.keys()):
+            active_loopers[key].setMul(looper_volume)
         return
     
     files = resolve_files(LOOPS_PATH, pattern)
