@@ -355,12 +355,12 @@ def handle_midi_event(status, data1, data2):
                 handle_oneshot_event("cc", key, info)
                 
     elif event_type == "pc":
-        if key in LOOPS.get("program", {}):
-            info = LOOPS["program"][key]
-            handle_loop_event("program", key, info)
-        elif key in ONESHOTS.get("program", {}):
-            info = ONESHOTS["program"][key]
-            handle_oneshot_event("program", key, info)
+        if key in LOOPS.get("pc", {}):
+            info = LOOPS["pc"][key]
+            handle_loop_event("pc", key, info)
+        elif key in ONESHOTS.get("pc", {}):
+            info = ONESHOTS["pc"][key]
+            handle_oneshot_event("pc", key, info)
             
     # handle OSC
     osc = info['osc']
